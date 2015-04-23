@@ -21,19 +21,19 @@ void BBFS(vertex_t *vertices, int source){
 	int v, w;
 
 	list_push(queue, source, 0);
-	vertices[source-1].loop = TREE;
+	vertices[source].loop = TREE;
 	
 	while (!list_empty(queue)){
 		v = list_peek(queue)->value;
 		list_pop(queue);
-		for (node=vertices[v-1].adj->head; node!=NULL ; node=node->next ){
+		for (node=vertices[v].adj->head; node!=NULL ; node=node->next ){
 			w = node->value;
-			if (!vertices[w-1].loop){
-				vertices[w-1].loop = TREE;
+			if (!vertices[w].loop){
+				vertices[w].loop = TREE;
 				list_push(queue, w, 0);
 			}
 		}
-		vertices[v-1].loop = TRUE;
+		vertices[v].loop = TRUE;
 	}
 	
 	list_destroy(queue);
@@ -43,28 +43,21 @@ void BBellmanFord(vertex_t *vertices, int source, int N){
 	int i, j, v;
 	list_node_t *node;
 	
-	for (j=0; j<N; j++){ /* vertices init */
-		vertices[j].value = j+1;
-		vertices[j].dist = INF;
-		vertices[j].prev = NONE;
-		vertices[j].loop = FALSE;
-	}
-	vertices[source-1].dist = 0;
-	vertices[source-1].prev = 0;
+	vertices[source].dist = 0;
+	vertices[source].prev = 0;
 	
 
 	for (i=0; i<N-1; i++) /* relaxation iterations */
-		for (j=0; j<N; j++)
-			for (node=vertices[j].adj->head; node!=NULL; node=node->next)
-				if (vertices[j].dist+node->weight < vertices[node->value-1].dist){
-					vertices[node->value-1].dist = vertices[j].dist+node->weight;
-					vertices[node->value-1].prev = j;
-				}
+		for (j=0; j<N; j++) for (node=vertices[j].adj->head; node!=NULL; node=node->next)
+			if (vertices[j].dist+node->weight < vertices[node->value].dist){
+				vertices[node->value].dist = vertices[j].dist+node->weight;
+				vertices[node->value].prev = j;
+			}
 
 	for (j=0; j<N; j++) /* negative cycles iteration, finds cycle root  */
 		for (node=vertices[j].adj->head; node!=NULL; node=node->next)
-			if (vertices[j].dist+node->weight < vertices[node->value-1].dist)
-				BBFS(vertices, j+1);
+			if (vertices[j].dist+node->weight < vertices[node->value].dist)
+				BBFS(vertices, j);
 
 }
 
@@ -83,11 +76,17 @@ int main(int argc, char const *argv[]){
 	
 	for(j=0; j<C; j++){	/* spot, spot, loss */
 		scanf("%d %d %d", &u, &v, &w);
-		list_push(local[u-1].adj, v, w);
+		list_push(local[u-1].adj, v-1, w);
 	}
 
+	for (j=0; j<N; j++){ /* vertices init */
+		local[j].value = j;
+		local[j].dist = INF;
+		local[j].prev = NONE;
+		local[j].loop = FALSE;
+	}
 
-	BBellmanFord(local, HQ, N);
+	BBellmanFord(local, HQ-1, N);
 	
 	
 	/* OUTPUT */

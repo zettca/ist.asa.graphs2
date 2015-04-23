@@ -1,7 +1,7 @@
 default: release
 
 release:
-	gcc -O3 -lm -ansi -Wall -pedantic -o main proj.c
+	gcc -O3 -lm -ansi -Wall -pedantic -o main proj2.c
 
 main: list.o main.o
 	gcc -o main list.o main.o
