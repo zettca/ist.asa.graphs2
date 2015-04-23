@@ -1,4 +1,4 @@
-default: main
+default: release
 
 release:
 	gcc -O3 -lm -ansi -Wall -pedantic -o main proj.c

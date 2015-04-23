@@ -2,15 +2,15 @@
 #include <stdlib.h>
 #include "list.h"
 
-#define FALSE	0
-#define TRUE	1
-#define TREE	2
+#define WHITE	0 /* unvisited node */
+#define BLACK	1 /* node is part of a negative cycle*/
+#define GREY	2 /* temporary for algorith iterations */
 #define INF 	2147000000
 #define BIG		2000000000
 #define NONE	-1
 
 typedef struct vertex{
-	int value, dist, prev, loop;
+	int value, dist, prev, color;
 	list_t *adj;
 } vertex_t;
 
@@ -21,19 +21,19 @@ void BBFS(vertex_t *vertices, int source){
 	int v, w;
 
 	list_push(queue, source, 0);
-	vertices[source].loop = TREE;
+	vertices[source].color = GREY;
 	
 	while (!list_empty(queue)){
 		v = list_peek(queue)->value;
 		list_pop(queue);
 		for (node=vertices[v].adj->head; node!=NULL ; node=node->next){
 			w = node->value;
-			if (!vertices[w].loop){
-				vertices[w].loop = TREE;
+			if (!vertices[w].color){
+				vertices[w].color = GREY;
 				list_push(queue, w, 0);
 			}
 		}
-		vertices[v].loop = TRUE;
+		vertices[v].color = BLACK;
 	}
 	
 	list_destroy(queue);
@@ -41,10 +41,9 @@ void BBFS(vertex_t *vertices, int source){
 
 void BBellmanFord(vertex_t *vertices, int source, int N){
 	list_node_t *node;
-	int i, j, v, changed;
+	int i, j, changed;
 	
-	vertices[source].dist = 0;
-	vertices[source].prev = 0;
+	vertices[source].dist = vertices[source].prev = 0;
 	
 	for (i=0; i<N-1; i++){ /* relaxation iterations */
 		changed = 0;
@@ -61,7 +60,6 @@ void BBellmanFord(vertex_t *vertices, int source, int N){
 		for (node=vertices[j].adj->head; node!=NULL; node=node->next)
 			if (vertices[j].dist+node->weight < vertices[node->value].dist)
 				BBFS(vertices, j);
-
 }
 
 
@@ -81,28 +79,24 @@ int main(int argc, char const *argv[]){
 		scanf("%d %d %d", &u, &v, &w);
 		list_push(local[u-1].adj, v-1, w);
 	}
-
+	
 	for (j=0; j<N; j++){ /* vertices init */
 		local[j].value = j;
 		local[j].dist = INF;
 		local[j].prev = NONE;
-		local[j].loop = FALSE;
+		local[j].color = WHITE;
 	}
 
 	BBellmanFord(local, HQ-1, N);
 	
-	
 	/* OUTPUT */
-	/* TOO MANY Ns, should be Is */
-	/* TOO MANY Is, should be Us */
 	for (j=0; j<N; j++){
-		if ((local[j].prev==NONE) || local[j].dist>=BIG){ /* Unlinkable */
+		if ((local[j].prev==NONE) || local[j].dist>=BIG) /* Unlinkable */
 			printf("U\n");
-		} else if (local[j].loop==TRUE){ /* Indeterminable */
+		else if (local[j].color==BLACK) /* Indeterminable */
 			printf("I\n");
-		} else {
-			printf("%d\n", local[j].dist);
-		}
+		else
+			printf("%d\n", local[j].dist); /* Calculable */
 	}
 
 	/* FREE MEMORY */
