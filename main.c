@@ -26,7 +26,7 @@ void BBFS(vertex_t *vertices, int source){
 	while (!list_empty(queue)){
 		v = list_peek(queue)->value;
 		list_pop(queue);
-		for (node=vertices[v].adj->head; node!=NULL ; node=node->next ){
+		for (node=vertices[v].adj->head; node!=NULL ; node=node->next){
 			w = node->value;
 			if (!vertices[w].loop){
 				vertices[w].loop = TREE;
@@ -40,19 +40,22 @@ void BBFS(vertex_t *vertices, int source){
 }
 
 void BBellmanFord(vertex_t *vertices, int source, int N){
-	int i, j, v;
 	list_node_t *node;
+	int i, j, v, changed;
 	
 	vertices[source].dist = 0;
 	vertices[source].prev = 0;
 	
-
-	for (i=0; i<N-1; i++) /* relaxation iterations */
+	for (i=0; i<N-1; i++){ /* relaxation iterations */
+		changed = 0;
 		for (j=0; j<N; j++) for (node=vertices[j].adj->head; node!=NULL; node=node->next)
 			if (vertices[j].dist+node->weight < vertices[node->value].dist){
 				vertices[node->value].dist = vertices[j].dist+node->weight;
 				vertices[node->value].prev = j;
+				changed = 1;
 			}
+		if (!changed) break;
+	}
 
 	for (j=0; j<N; j++) /* negative cycles iteration, finds cycle root  */
 		for (node=vertices[j].adj->head; node!=NULL; node=node->next)
