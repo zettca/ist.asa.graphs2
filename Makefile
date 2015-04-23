@@ -10,7 +10,7 @@ run: main
 	./main
 
 release:
-	gcc -ansi -Wall -pedantic -o main merged.c
+	gcc -O3 -lm -ansi -Wall -pedantic -o main proj.c
 
 clean:
 	rm *.o
