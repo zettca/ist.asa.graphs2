@@ -1,2 +1,12 @@
-# graphs2
-Best-route graphs
+# ist.asa.graphs2
+C implementation of a smallest path-cost using the Bellman-Ford algorithm.
+
+### Project Infos
+* **Date:** Semester 2 - 2014/2015 (April 2015)
+* **Topic:** Shortest(cost) paths in a road network (Bellman-Ford implementation)
+* **Course:** Análise e Síntese de Algoritmos (ASA) | Algorithm Analysis
+* **Course Link:** https://fenix.tecnico.ulisboa.pt/disciplinas/ASA1011/2014-2015/2-semestre/
+
+
+### Disclaimer
+This repository, and every other `ist.COURSE.*` repos on GitHub correspond to school projects from the respective *COURSE*. The code on this repo is intended for educational purposes. I do not take any responsibility, liability or whateverity over any code faults, inconsistency or anything else. If you intend on copying most or parts of the code for your school projects, keep in mind that this repo is public, and that your professor might search the web for similar project solutions or whatnot and choose to fail you for copying.
